@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: url('image/bg6.jpg') no-repeat center center/cover;
+        }
+
+        .main {
+            width: 750px;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .toggle {
+            padding: 3px 7px;
+            color: white;
+            background-color: blue;
+            border: none;
+            outline: none;
+            border-radius: 3px;
+            margin: 0px 3px;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        .slide {
+            width: 600px;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            transition: 1s ease;
+        }
+
+        .bottom{
+            margin-top: 10px;
+        }
+
+        .button{
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            border: 1px solid #0011ff;
+            outline: none;
+            background-color: transparent;
+            margin: 0px 5px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="main">
+            <button class="toggle" id="prev">Previous</button>
+            <div class="slide">
+                <img src="image/nature.jpg" alt="nature">
+                <img src="image/nature2.jpg" alt="nature2">
+                <img src="image/bg10.jpg" alt="nature2">
+                <img src="image/bg4.jpg" alt="nature2">
+            </div>
+            <button class="toggle" id="next">Next</button>
+        </div>
+        <div class="bottom">
+        </div>
+    </div>
+
+    <script>
+        let previous = document.querySelector('#prev');
+        let next = document.querySelector('#next');
+        let image = document.querySelectorAll('img');
+        let bottom = document.querySelector('.bottom');
+        let counter = 0;
+
+        for(let i=0; i<image.length;i++){
+            let btn = document.createElement('button');
+            btn.classList.add('button');
+            bottom.appendChild(btn);
+        }
+
+        let buttons = document.querySelectorAll('.button');
+
+        buttons[0].style.backgroundColor = '#0011ff';
+
+        const resetBg = ()=>{
+            buttons.forEach((button)=>{
+                button.style.backgroundColor = 'transparent';
+            });
+        }
+
+        buttons.forEach((button,i)=>{
+            button.addEventListener('click',()=>{
+                resetBg();
+                image.forEach((photo)=>{
+                    photo.style.transform = `translateX(${-i*100}%)`;
+                    button.style.backgroundColor = '#0011ff';
+                });
+            });
+        });
+        
+
+        image.forEach((photo, i) => {
+            photo.style.left = `${i * 100}%`;
+        });
+
+        next.addEventListener('click',()=>{
+            if(counter < image.length-1){
+                counter++;
+                buttons[counter].style.backgroundColor = '#0011ff';
+                slideImage();
+            }
+            else{
+                counter = 0;
+                buttons[0].style.backgroundColor = '#0011ff';
+                slideImage();
+            }
+        });
+
+        previous.addEventListener('click',()=>{
+            if(counter <= image.length-image.length){
+                counter = 3;
+                slideImage();
+            }
+            else{
+                counter--;
+                slideImage();
+            }
+        });
+
+        const slideImage = ()=>{
+            changeBg();
+            image.forEach((photo)=>{
+                photo.style.transform = `translateX(${-counter*100}%)`;
+            });
+        }
+
+        const changeBg = ()=>{
+            resetBg();
+            buttons[counter].style.backgroundColor = '#0011ff';
+        }
+
+        let changeInterval;
+
+        const startSlideShow = ()=>{
+                changeInterval  = setInterval(()=>{
+                slideImage();
+                if(counter < image.length-1){
+                    counter++;
+                    buttons[counter].style.backgroundColor = '#0011ff';
+                    slideImage();
+                }
+                else{
+                    counter = 0;
+                    buttons[0].style.backgroundColor = '#0011ff';
+                    slideImage();
+                }
+            },2000);
+        }
+
+        const stopSlideShow = ()=>{
+            clearInterval(changeInterval);
+        }
+
+        image.forEach((photo)=>{
+            photo.addEventListener('mouseover',()=>{
+            stopSlideShow();
+            });
+            photo.addEventListener('mouseout',()=>{
+                startSlideShow();
+            });
+        });
+
+        buttons.forEach((button)=>{
+            button.addEventListener('mouseover',()=>{
+            stopSlideShow();
+            });
+            button.addEventListener('mouseout',()=>{
+                startSlideShow();
+            });
+        });
+
+        previous.addEventListener('mouseover',()=>{
+            stopSlideShow();
+        });
+        previous.addEventListener('mouseout',()=>{
+            startSlideShow();
+        });
+
+        next.addEventListener('mouseover',()=>{
+            stopSlideShow();
+        });
+        next.addEventListener('mouseout',()=>{
+            startSlideShow();
+        });
+
+        startSlideShow();
+
+    </script>
+</body>
+
+</html>
